@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import android.os.AsyncTask;
@@ -24,6 +25,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.json.JSONObject;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -95,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private static class ApiTask extends AsyncTask<String, Void, String> {
+    private class ApiTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             String apiUrl = params[0];
@@ -129,6 +133,25 @@ public class MainActivity extends AppCompatActivity {
             if (result != null) {
                 // Affichez le résultat dans la console (Logcat)
                 Log.d("API Response", result);
+
+//                TextView resultTextView = findViewById(R.id.resultTextView);
+//                resultTextView.setText(result);
+
+                try {
+                    // Convertissez la chaîne JSON en un objet JSONObject
+                    JSONObject jsonObject = new JSONObject(result);
+
+                    // Accédez à la propriété "message" dans l'objet JSON
+                    String message = jsonObject.getString("value");
+
+                    // Mettez à jour le TextView sur le thread principal
+                    TextView resultTextView = findViewById(R.id.resultTextView);
+                    resultTextView.setText(message);
+
+                } catch (Exception e) {
+                    Log.e("JSON Parsing", "Error parsing JSON", e);
+                }
+
             }
         }
     }
