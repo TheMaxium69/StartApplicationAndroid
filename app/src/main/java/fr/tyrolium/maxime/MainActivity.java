@@ -12,6 +12,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button play;
@@ -28,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
         this.play2 = (Button) findViewById(R.id.play2);
         this.popup = (Button) findViewById(R.id.popup);
         this.myactivity = this;
+
+
+
 
         play.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,5 +90,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Exécutez la tâche asynchrone pour effectuer la requête API
+        new ApiTask().execute("https://api.chucknorris.io/jokes/random");
+
+    }
+
+    private static class ApiTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String apiUrl = params[0];
+
+            try {
+                URL url = new URL(apiUrl);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+                try {
+                    InputStream in = urlConnection.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder result = new StringBuilder();
+                    String line;
+
+                    while ((line = reader.readLine()) != null) {
+                        result.append(line);
+                    }
+
+                    return result.toString();
+                } finally {
+                    urlConnection.disconnect();
+                }
+            } catch (IOException e) {
+                Log.e("API Request", "Error during API request", e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                // Affichez le résultat dans la console (Logcat)
+                Log.d("API Response", result);
+            }
+        }
     }
 }
