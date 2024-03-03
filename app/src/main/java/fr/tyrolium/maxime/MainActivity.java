@@ -95,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Exécutez la tâche asynchrone pour effectuer la requête API
-        new ApiTask().execute("https://api.chucknorris.io/jokes/random");
+//        new ApiTask().execute("https://api.chucknorris.io/jokes/random");
+        new ApiTask().execute("http://vps204.tyrolium.fr/apiPokemon/index.php?controller=pokemon&task=getById&id=2");
 
     }
 
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(result);
 
                     // Accédez à la propriété "message" dans l'objet JSON
-                    String message = jsonObject.getString("value");
+                    String message = jsonObject.getString("name");
 
                     // Mettez à jour le TextView sur le thread principal
                     TextView resultTextView = findViewById(R.id.resultTextView);
